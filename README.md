@@ -26,6 +26,15 @@ Until Supabase is connected the storefront shows six clearly labelled sample car
 5. **Paystack:** set the webhook URL to `https://<your-domain>/api/payments/paystack/webhook`.
 6. **Run:** `npm run dev`, or `npm run build && npm start`.
 
+## Deploy on Vercel
+
+1. vercel.com → **Add New → Project** → import `Car-Direct` from GitHub. Vercel detects Next.js; keep the default build settings.
+2. Deploy. Without environment variables the site runs in **sample mode** (six sample cars, payments off), which is fine for a first look.
+3. **Settings → Environment Variables**: add the variables from `.env.example`. Use Paystack **test** keys for Preview and **live** keys for Production only when you go live. `NEXT_PUBLIC_*` values are baked in at build time, so **redeploy** after changing them.
+4. Functions run in London (`lhr1`, see `vercel.json`). Create the Supabase project in **London (eu-west-2)** so the database sits next to them.
+5. Every push to `main` deploys to production; every other branch gets a preview URL.
+6. Preview URLs are behind Vercel's login by default, so Paystack can't reach their webhook. Test webhooks against production with test keys, or add a protection bypass for automation in **Settings → Deployment Protection**.
+
 ## Money rules
 
 - All money is stored as integer **kobo**. The deposit is 40% rounded to the nearest naira; the balance is the price minus the deposit, so the two always add up exactly (`lib/pricing.ts`, mirrored in SQL).
